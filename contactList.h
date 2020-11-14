@@ -4,7 +4,7 @@ struct PhoneNumber{
 }Phone;
 */
 
-struct ContactData
+struct contact
 {
     char name[255];
     char phone[20];
@@ -14,14 +14,16 @@ struct ContactData
     char company[255];
 };
 
-typedef struct ContactData Contact;
-typedef struct ContactList ContactList;
+typedef struct contact Contact;
+typedef struct contactList ContactList;
 //typedef struct NumberList Number;
 
 ContactList* listInit();
-bool listIsEmpty(ContactList*);
+int listIsEmpty(ContactList*);
+void printList(ContactList*);
 ContactList* insertContact(ContactList*, Contact);
 ContactList* removeContact(ContactList*, char*);
-void replaceContact(ContactList*); // !?
-void updateContact(ContactList*, char*);
+void replaceContact(ContactList*, char*, Contact);
+void updateContact(ContactList*, char*, int, char*);
 int companyContacts(ContactList*, char*);
+void clearList(ContactList *);

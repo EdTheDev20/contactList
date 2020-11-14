@@ -1,2 +1,7 @@
 contactList.cbp
+contactList.depend
 contactList.layout
+contactList.o
+main.exe
+main.o
+obj/
