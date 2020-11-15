@@ -3,7 +3,7 @@
 #include <string.h>
 #include"contactList.h"
 
-// Lista encadeada simples
+// Listas encadeadas simples
 // Cada contacto
 struct contactList
 {
@@ -11,31 +11,37 @@ struct contactList
     struct contactList *next;
 };
 
-// Lista encadeada de números
-/*
-struct NumberList{
+// Cada número
+struct numberList{
     Phone phone;
-    struct NumberList* next;
+    struct numberList* next;
 };
-*/
 
-// Inicializar lista
+
+// Inicializar listas
+// Lista de contactos
 ContactList* listInit()
 {
     return NULL;
 }
 
+// Lista de números
+NumberList* numberListInit(){
+    return NULL;
+}
+
+
 // Verificar lista vazia
 int listIsEmpty(ContactList* l)
 {
-    //return (l == NULL ? true : false);
     if(l==NULL){
         return 0;
     }
     return -1;
 }
 
-// Imprimir lista
+// Imprimir listas
+// Imprimir lista de contactos
 void printList(ContactList* l){
     if(l!=NULL){
         for(ContactList* active = l; active != NULL; active = active->next){
@@ -47,9 +53,43 @@ void printList(ContactList* l){
             printf("\n\n-------------------------------\n");
         }
     }else{
-        printf("\nNão existem contactos na lista");
+        printf("\nNão existem contactos na lista...");
         printf("\n\n-------------------------------\n\n");
     }
+}
+
+// Imprimir lista de números
+void printNumberList(NumberList* l){
+    if(l!=NULL){
+        for(ContactList* active = l; active != NULL; active = active->next){
+            printf("\nNome: %s", active->data.name);
+            printf("\nTelefone: %s", active->data.phone);
+            printf("\nEmail: %s", active->data.email);
+            printf("\nEndereço: %s", active->data.address);
+            printf("\nEmpresa: %s", active->data.company);
+            printf("\n\n-------------------------------\n");
+        }
+    }else{
+        printf("\nNão existem contactos na lista...");
+        printf("\n\n-------------------------------\n\n");
+    }
+}
+
+// Buscar contacto
+int searchContact(ContactList* l, char* n){
+    for(ContactList* active = l; active != NULL; active = active->next){
+        if(strcmpi(n, active->data.name) == 0){
+            printf("\nContacto\n");
+            printf("\nNome: %s", active->data.name);
+            printf("\nTelefone: %s", active->data.phone);
+            printf("\nEmail: %s", active->data.email);
+            printf("\nEndereço: %s", active->data.address);
+            printf("\nEmpresa: %s\n\n", active->data.company);
+            return 0;
+        }
+    }
+    printf("\nNão foi encontrado nenhum contacto na lista com este nome...\n\n");
+    return -1;
 }
 
 // Inserir no inicio da lista
@@ -87,9 +127,9 @@ ContactList* removeContact(ContactList* l, char* p)
             }
             prev = active;
         }
-        printf("O contacto não foi encontrado\n\n");
+        printf("\nO contacto não foi encontrado...\n\n");
     }else{
-        printf("Não existem contactos na lista.\n\n");
+        printf("\nNão existem contactos na lista...\n\n");
     }
 
     return l;
@@ -106,11 +146,11 @@ void replaceContact(ContactList* l, char* n, Contact c)
             strcpy(active->data.name, c.name);
             strcpy(active->data.phone, c.phone);
 
-            printf("\nContacto actualizado com sucesso\n\n");
+            printf("\nContacto actualizado com sucesso.\n\n");
             return;
         }
     }
-    printf("\nNenhum contacto foi encontrado com este nome\n\n");
+    printf("\nNenhum contacto foi encontrado com este nome...\n\n");
 }
 
 // Actualizar contacto
@@ -140,42 +180,26 @@ void updateContact(ContactList* l, char* n, int opt, char* field)
                 }
                 break;
                 default: {
-                    printf("ERRO...");
                     return;
                 }
             }
 
-            printf("\nContacto actualizado com sucesso\n\n");
+            printf("\nContacto actualizado com sucesso.\n\n");
             return;
         }
     }
-    printf("\nNenhum contacto foi encontrado com este nome\n\n");
 }
 
-// Numero de contactos da mesma empresa **************************************************************** TROCAR PARA RECURSIVA
+// Numero de contactos da mesma empresa
 int companyContacts(ContactList* l, char* c)
 {
-    int n = 0;
+    if(l == NULL)
+        return 0;
 
-    //FAZER DE MODO RECURSIVO ***************************************************
-    for(ContactList* active = l; active != NULL; active = active->next){
-        if(strcmpi(c, active->data.company) == 0){
-            n++;
-        }
-    }
-
-    /*
-    if(l == NULL){
-        return n;
-    }else{
-        if(strcmpi(c, l->data->company) == 0){
-            n++;
-        }
-        companyContacts(l->next, c);
-    }
-    */
-
-    return n;
+    if(strcmpi(c, l->data.company) == 0)
+        return 1 + companyContacts(l->next, c);
+    else
+        return 0 + companyContacts(l->next, c);
 }
 
 // Limpar lista

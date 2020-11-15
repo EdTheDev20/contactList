@@ -29,10 +29,11 @@ int main()
         printf("1 - Verificar lista vazia\n");
         printf("2 - Inserir contacto\n");
         printf("3 - Remover contacto\n");
-        printf("4 - Substituir contacto\n");
+        printf("4 - Substituir contacto *\n");
         printf("5 - Actualizar contacto\n");
-        printf("6 - Contactos da empresa*\n");
+        printf("6 - Contactos da empresa\n");
         printf("7 - Quantidade de números do contacto**\n");
+        printf("8 - Listar Contactos\n");
         printf("0 - Sair...\n\n");
         printf("Escolha uma opcao: ");
 
@@ -107,6 +108,7 @@ int main()
                 system("cls");
                 printf("----- Substituir contacto -----\n\n");
                 printf("------------ \n| 0 - Voltar |\n ------------ \n");
+                printf("\nInforme os novos dados.\n");
                 printf("\nNome: ");
                 fflush(stdin);
                 gets(contactData.name);
@@ -134,7 +136,7 @@ int main()
                     break;
 
 
-                printf("\n\nDigite o nome do contacto que pretende substituir:\n");
+                printf("\n\nInforme o nome do contacto que pretende substituir:\n");
                 fflush(stdin);
                 gets(contactToReplace);
                 if(strcmp(contactToReplace, "0")==0)
@@ -156,46 +158,47 @@ int main()
                 if(strcmp(contactData.name, "0")==0)
                     break;
 
-                // Verificar existencia e trazer os dados
+                if(searchContact(contacts, contactData.name) == 0){
+                    printf("\n(1) Actualizar nome");
+                    printf("\n(2) Actualizar número");
+                    printf("\n(3) Actualizar email");
+                    printf("\n(4) Actualizar endereço");
+                    printf("\n(5) Actualizar empresa\n");
+                    printf("\nEscolha a opção: ");
 
-                printf("\n(1) Actualizar nome");
-                printf("\n(2) Actualizar número");
-                printf("\n(3) Actualizar email");
-                printf("\n(4) Actualizar endereço");
-                printf("\n(5) Actualizar empresa\n");
-                printf("\nEscolha a opção: ");
+                    scanf("%d", &m);
+                    fflush(stdin);
 
-                scanf("%d", &m);
-                fflush(stdin);
-                switch (m){
-                    case 1:{
-                        printf("\nInforme o novo nome: ");
+                    switch (m){
+                        case 1:{
+                            printf("\nInforme o novo nome: ");
+                        }
+                        break;
+                        case 2:{
+                            printf("\nInforme o novo número: ");
+                        }
+                        break;
+                        case 3:{
+                            printf("\nInforme o novo email: ");
+                        }
+                        break;
+                        case 4:{
+                            printf("\nInforme o novo endereço: ");
+                        }
+                        break;
+                        case 5:{
+                            printf("\nInforme a nova empresa: ");
+                        }
+                        break;
+                        default: {
+                            printf("\nERRO! Opcção inválida...");
+                        }
+                        break;
                     }
-                    break;
-                    case 2:{
-                        printf("\nInforme o novo número: ");
-                    }
-                    break;
-                    case 3:{
-                        printf("\nInforme o novo email: ");
-                    }
-                    break;
-                    case 4:{
-                        printf("\nInforme o novo endereço: ");
-                    }
-                    break;
-                    case 5:{
-                        printf("\nInforme a nova empresa: ");
-                    }
-                    break;
-                    default: {
-                        printf("\nERRO...");
-                    }
-                    break;
+
+                    gets(updateField);
+                    updateContact(contacts, contactData.name, m, updateField);
                 }
-
-                gets(updateField);
-                updateContact(contacts, contactData.name, m, updateField);
 
                 fflush(stdin);
                 system("pause");
@@ -223,9 +226,17 @@ int main()
                 printf("Quantidade de números em um contacto\n\n");
                 printf(" ------------ \n| 0 - Voltar |\n ------------ \n");
                 printf("\n-------------------------------\n");
-                printList(contacts);
                 /*
                 */
+                system("pause");
+                system("cls");
+            }
+            break;
+            case 8:{ // Listar contactos
+                system("cls");
+                printf("Lista de contactos\n\n");
+                printf("\n-------------------------------\n");
+                printList(contacts);
                 system("pause");
                 system("cls");
             }
