@@ -11,15 +11,13 @@ int main()
     //Declaracao de variaveis
     int m; // para o menu
     int listEmpty;
-    char name[255];
+    char sm;
     char phone[20];
-    char email[255];
-    char address[255];
-    char company[255];
     char contactToReplace[255];
     char updateField[255];
     Contact contactData;
     ContactList *contacts;
+    NumberList* numbers;
 
     //Inicializando as listas
     contacts = listInit();
@@ -27,13 +25,12 @@ int main()
     do{
         system("cls");
         printf("1 - Verificar lista vazia\n");
-        printf("2 - Inserir contacto\n");
+        printf("2 - Adicionar contacto\n");
         printf("3 - Remover contacto\n");
         printf("4 - Substituir contacto *\n");
         printf("5 - Actualizar contacto\n");
         printf("6 - Contactos da empresa\n");
-        printf("7 - Quantidade de números do contacto**\n");
-        printf("8 - Listar Contactos\n");
+        printf("7 - Listar Contactos\n");
         printf("0 - Sair...\n\n");
         printf("Escolha uma opcao: ");
 
@@ -62,11 +59,32 @@ int main()
                 gets(contactData.name);
                 if(strcmp(contactData.name, "0")==0)
                    break;
+
+                contactData.phone = numberListInit();
                 printf("Telefone: ");
+                fflush(stdin);
+                gets(phone);
+                contactData.phone = insertNumber(contactData.phone, phone);
+                do{
+                    printf("Deseja adicionar um novo número? (s/n)\n");
+                    printf("s - Adicionar\n");
+                    printf("n ou qualquer outra tecla - Cancelar\n\n");
+                    printf(" : ");
+                    fflush(stdin);
+                    scanf("%c", &sm);
+                    if(sm == 's'){
+                        printf("Informe o novo número: \n");
+                        fflush(stdin);
+                        gets(phone);
+                        contactData.phone = insertNumber(contactData.phone, phone);
+                    }
+                }while(sm == 's');
+                /*
                 fflush(stdin);
                 gets(contactData.phone);
                 if(strcmp(contactData.phone, "0")==0)
                     break;
+                */
                 printf("Email: ");
                 fflush(stdin);
                 gets(contactData.email);
@@ -89,17 +107,17 @@ int main()
                 system("cls");
             }
             break;
-            case 3:{// Remover contacto
+            case 3:{ // Remover contacto
                 system("cls");
                 printf("----- Remover contacto -----\n\n");
                 printf(" ------------ \n| 0 - Voltar |\n ------------ \n");
                 printf("\nDigite o numero do contacto que pretende remover:\n");
                 fflush(stdin);
-                gets(contactData.phone);
-                if(strcmp(contactData.phone, "0")==0)
+                gets(phone);
+                if(strcmp(phone, "0")==0)
                     break;
 
-                contacts = removeContact(contacts, contactData.phone);
+                contacts = removeContact(contacts, phone);
                 system("pause");
                 system("cls");
             }
@@ -114,11 +132,32 @@ int main()
                 gets(contactData.name);
                 if(strcmp(contactData.name, "0")==0)
                    break;
+
+                contactData.phone = numberListInit();
                 printf("Telefone: ");
+                fflush(stdin);
+                gets(phone);
+                contactData.phone = insertNumber(contactData.phone, phone);
+                do{
+                    printf("Deseja adicionar um novo número? (s/n)\n");
+                    printf("s - Adicionar\n");
+                    printf("n ou qualquer outra tecla - Cancelar\n\n");
+                    printf(" : ");
+                    fflush(stdin);
+                    scanf("%c", &sm);
+                    if(sm == 's'){
+                        printf("Informe o novo número: \n");
+                        fflush(stdin);
+                        gets(phone);
+                        contactData.phone = insertNumber(contactData.phone, phone);
+                    }
+                }while(sm == 's');
+                /*
                 fflush(stdin);
                 gets(contactData.phone);
                 if(strcmp(contactData.phone, "0")==0)
                     break;
+                */
                 printf("Email: ");
                 fflush(stdin);
                 gets(contactData.email);
@@ -160,44 +199,42 @@ int main()
 
                 if(searchContact(contacts, contactData.name) == 0){
                     printf("\n(1) Actualizar nome");
-                    printf("\n(2) Actualizar número");
-                    printf("\n(3) Actualizar email");
-                    printf("\n(4) Actualizar endereço");
-                    printf("\n(5) Actualizar empresa\n");
-                    printf("\nEscolha a opção: ");
+                    printf("\n(2) Adicionar novo número(s)");
+                    printf("\n(3) Remover número(s)");
+                    printf("\n(4) Actualizar email");
+                    printf("\n(5) Actualizar endereço");
+                    printf("\n(6) Actualizar empresa\n");
+                    printf("\n : ");
 
-                    scanf("%d", &m);
                     fflush(stdin);
+                    scanf("%c", &sm);
 
-                    switch (m){
-                        case 1:{
+                    switch (sm){
+                        case '1':
                             printf("\nInforme o novo nome: ");
-                        }
                         break;
-                        case 2:{
+                        case '2':
                             printf("\nInforme o novo número: ");
-                        }
                         break;
-                        case 3:{
+                        case '3':
+                            printf("\nInforme o número que pretende remover: ");
+                        break;
+                        case '4':
                             printf("\nInforme o novo email: ");
-                        }
                         break;
-                        case 4:{
+                        case '5':
                             printf("\nInforme o novo endereço: ");
-                        }
                         break;
-                        case 5:{
+                        case '6':
                             printf("\nInforme a nova empresa: ");
-                        }
                         break;
-                        default: {
-                            printf("\nERRO! Opcção inválida...");
-                        }
+                        default:
+                            printf("\nERRO! Opcção inválida...\n\n");
                         break;
                     }
-
+                    fflush(stdin);
                     gets(updateField);
-                    updateContact(contacts, contactData.name, m, updateField);
+                    updateContact(contacts, contactData.name, sm, updateField);
                 }
 
                 fflush(stdin);
@@ -221,18 +258,7 @@ int main()
                 system("cls");
             }
             break;
-            case 7:{ // Quantidade de números do contacto
-                system("cls");
-                printf("Quantidade de números em um contacto\n\n");
-                printf(" ------------ \n| 0 - Voltar |\n ------------ \n");
-                printf("\n-------------------------------\n");
-                /*
-                */
-                system("pause");
-                system("cls");
-            }
-            break;
-            case 8:{ // Listar contactos
+            case 7:{ // Listar contactos
                 system("cls");
                 printf("Lista de contactos\n\n");
                 printf("\n-------------------------------\n");
@@ -245,10 +271,17 @@ int main()
                 system("cls");
 
                 // Limpando as listas
+                for(ContactList* remNumbers = contacts; remNumbers != NULL; remNumbers = remNumbers->next){
+                    clearNumberList(remNumbers->data.phone);
+                }
                 clearList(contacts);
 
             }
             break;
+            default:{
+                printf("\nOpcção inválida. Por favor, tente novamente.\n\n");
+                system("pause");
+            }
         }
 
     }while(m!=0);

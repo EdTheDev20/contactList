@@ -8,25 +8,25 @@
 struct contactList
 {
     Contact data;
-    struct contactList *next;
+    struct contactList* next;
 };
 
 // Cada número
-struct numberList{
-    Phone phone;
+struct numberList
+{
+    char number[20];
     struct numberList* next;
 };
 
 
 // Inicializar listas
-// Lista de contactos
 ContactList* listInit()
 {
     return NULL;
 }
 
-// Lista de números
-NumberList* numberListInit(){
+NumberList* numberListInit()
+{
     return NULL;
 }
 
@@ -41,12 +41,14 @@ int listIsEmpty(ContactList* l)
 }
 
 // Imprimir listas
-// Imprimir lista de contactos
-void printList(ContactList* l){
+void printList(ContactList* l)
+{
     if(l!=NULL){
         for(ContactList* active = l; active != NULL; active = active->next){
             printf("\nNome: %s", active->data.name);
-            printf("\nTelefone: %s", active->data.phone);
+            //printf("\nTelefone: %s", active->data.phone);
+            printf("\nQuantidade de nºs de telefone: %d", phoneNumbers(active));
+            printNumberList(active->data.phone);
             printf("\nEmail: %s", active->data.email);
             printf("\nEndereço: %s", active->data.address);
             printf("\nEmpresa: %s", active->data.company);
@@ -58,30 +60,25 @@ void printList(ContactList* l){
     }
 }
 
-// Imprimir lista de números
-void printNumberList(NumberList* l){
-    if(l!=NULL){
-        for(ContactList* active = l; active != NULL; active = active->next){
-            printf("\nNome: %s", active->data.name);
-            printf("\nTelefone: %s", active->data.phone);
-            printf("\nEmail: %s", active->data.email);
-            printf("\nEndereço: %s", active->data.address);
-            printf("\nEmpresa: %s", active->data.company);
-            printf("\n\n-------------------------------\n");
-        }
-    }else{
-        printf("\nNão existem contactos na lista...");
-        printf("\n\n-------------------------------\n\n");
+void printNumberList(NumberList* nl)
+{
+    int i = 0;
+    for(NumberList* active = nl; active != NULL; active = active->next){
+        i++;
+        printf("\nTelefone %d: %s", i, active->number);
     }
 }
+
 
 // Buscar contacto
-int searchContact(ContactList* l, char* n){
+int searchContact(ContactList* l, char* n)
+{
     for(ContactList* active = l; active != NULL; active = active->next){
         if(strcmpi(n, active->data.name) == 0){
             printf("\nContacto\n");
             printf("\nNome: %s", active->data.name);
-            printf("\nTelefone: %s", active->data.phone);
+            //printf("\nTelefone: %s", active->data.phone);
+            printNumberList(active->data.phone);
             printf("\nEmail: %s", active->data.email);
             printf("\nEndereço: %s", active->data.address);
             printf("\nEmpresa: %s\n\n", active->data.company);
@@ -92,7 +89,7 @@ int searchContact(ContactList* l, char* n){
     return -1;
 }
 
-// Inserir no inicio da lista
+// Inserir no inicio das listas
 ContactList* insertContact(ContactList* l, Contact c)
 {
     ContactList* newContact = (ContactList*)malloc(sizeof(ContactList));
@@ -101,7 +98,11 @@ ContactList* insertContact(ContactList* l, Contact c)
     strcpy(newContact->data.company, c.company);
     strcpy(newContact->data.email, c.email);
     strcpy(newContact->data.name, c.name);
-    strcpy(newContact->data.phone, c.phone);
+    //strcpy(newContact->data.phone, c.phone);
+    newContact->data.phone = numberListInit();
+    for(NumberList* aux = c.phone; aux != NULL; aux = aux->next){
+        newContact->data.phone = insertNumber(newContact->data.phone, aux->number);
+    }
     newContact->next = l;
 
     printf("\nO contacto foi inserido com sucesso.\n\n");
@@ -109,30 +110,62 @@ ContactList* insertContact(ContactList* l, Contact c)
     return newContact;
 }
 
-// Remover contacto
-ContactList* removeContact(ContactList* l, char* p)
+NumberList* insertNumber(NumberList* nl, char* n)
 {
-    if(l!=NULL){
-        ContactList* prev;
-        for(ContactList* active = l; active != NULL; active = active->next){
-            if(strcmpi(p, active->data.phone) == 0){
+    NumberList* newNumber = (NumberList*)malloc(sizeof(NumberList));
+
+    strcpy(newNumber->number, n);
+    newNumber->next = nl;
+
+    return newNumber;
+}
+
+
+// Remover
+ContactList* removeContact(ContactList* l, char* n)
+{
+    ContactList* prev;
+    for(ContactList* active = l; active != NULL; active = active->next){
+        for(NumberList* aux = active->data.phone; aux != NULL; aux = aux->next){
+            if(strcmpi(n, aux->number) == 0){
                 if(active == l){
                     l = active->next;
                 }else{
                     prev->next = active->next;
                 }
+
+                clearNumberList(active->data.phone);
+
                 free(active);
                 printf("Contacto removido.\n\n");
                 return l;
             }
-            prev = active;
         }
-        printf("\nO contacto não foi encontrado...\n\n");
-    }else{
-        printf("\nNão existem contactos na lista...\n\n");
+        prev = active;
     }
-
+    printf("\nO contacto não foi encontrado...\n\n");
     return l;
+}
+
+NumberList* removeNumber(NumberList* nl, char* n)
+{
+    NumberList* prev;
+    for(NumberList* active = nl; active != NULL; active = active->next){
+        if(strcmpi(n, active->number) == 0){
+            if(active == nl){
+                nl = active->next;
+            }else{
+                prev->next = active->next;
+            }
+
+            free(active);
+            printf("Número removido.\n\n");
+            return nl;
+        }
+        prev = active;
+    }
+    printf("\nO número não foi encontrado...\n\n");
+    return nl;
 }
 
 // Substituir contacto
@@ -144,9 +177,14 @@ void replaceContact(ContactList* l, char* n, Contact c)
             strcpy(active->data.company, c.company);
             strcpy(active->data.email, c.email);
             strcpy(active->data.name, c.name);
-            strcpy(active->data.phone, c.phone);
+            //strcpy(active->data.phone, c.phone);
+            clearNumberList(active->data.phone);
+            active->data.phone = numberListInit();
+            for(NumberList* aux = c.phone; aux != NULL; aux = aux->next){
+                active->data.phone = insertNumber(active->data.phone, aux->number);
+            }
 
-            printf("\nContacto actualizado com sucesso.\n\n");
+            printf("\nContacto substituído com sucesso.\n\n");
             return;
         }
     }
@@ -154,29 +192,39 @@ void replaceContact(ContactList* l, char* n, Contact c)
 }
 
 // Actualizar contacto
-void updateContact(ContactList* l, char* n, int opt, char* field)
+void updateContact(ContactList* l, char* n, char opt, char* field)
 {
     for(ContactList* active = l; active != NULL; active = active->next){
         if(strcmpi(n, active->data.name) == 0){
             switch(opt){
-                case 1:{
+                case '1':{
                     strcpy(active->data.name, field);
+                    printf("\nNome actualizado com sucesso.\n\n");
                 }
                 break;
-                case 2:{
-                    strcpy(active->data.phone, field);
+                case '2':{
+                    //strcpy(active->data.phone, field);
+                    active->data.phone = insertNumber(active->data.phone, field);
+                    printf("\Número adicionado com sucesso.\n\n");
                 }
                 break;
-                case 3:{
+                case '3':{
+                    active->data.phone = removeNumber(active->data.phone, field);
+                }
+                break;
+                case '4':{
                     strcpy(active->data.email, field);
+                    printf("\nEmail actualizado com sucesso.\n\n");
                 }
                 break;
-                case 4:{
+                case '5':{
                     strcpy(active->data.address, field);
+                    printf("\nEndereço actualizado com sucesso.\n\n");
                 }
                 break;
-                case 5:{
+                case '6':{
                     strcpy(active->data.company, field);
+                    printf("\nEmpresa actualizada com sucesso.\n\n");
                 }
                 break;
                 default: {
@@ -184,7 +232,6 @@ void updateContact(ContactList* l, char* n, int opt, char* field)
                 }
             }
 
-            printf("\nContacto actualizado com sucesso.\n\n");
             return;
         }
     }
@@ -202,8 +249,21 @@ int companyContacts(ContactList* l, char* c)
         return 0 + companyContacts(l->next, c);
 }
 
-// Limpar lista
-void clearList(ContactList *l){
+// Quantidade de números de telefone do contacto
+int phoneNumbers(ContactList* c){
+    int i = 0;
+
+    for(NumberList* active = c->data.phone; active != NULL; active = active->next){
+        i++;
+    }
+
+    return i;
+}
+
+
+// Limpar listas
+void clearList(ContactList* l)
+{
     if(l != NULL){
         ContactList *aux = l;
         while(aux != NULL){
@@ -214,8 +274,17 @@ void clearList(ContactList *l){
     }
 }
 
-
-
+void clearNumberList(NumberList* nl)
+{
+    if(nl != NULL){
+        NumberList *aux = nl;
+        while(aux != NULL){
+            nl = nl->next;
+            free(aux);
+            aux = nl;
+        }
+    }
+}
 
 
 
